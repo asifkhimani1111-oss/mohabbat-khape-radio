@@ -8,56 +8,45 @@
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;
- font-family:Arial,sans-serif;
- color:#fff;
+ margin:0;font-family:Arial,sans-serif;color:#fff;
  background:linear-gradient(145deg,#160d24,#3b1745,#101827);
- min-height:100vh;
- text-align:center;
+ min-height:100vh;text-align:center;
 }
 header{padding:25px 12px 10px}
-header h1{font-size:30px;color:#ffd477;margin:8px 0}
+header h1{font-size:28px;color:#ffd477;margin:8px 0}
 header p{color:#f5d9ec}
-.radio{
- max-width:440px;
- margin:20px auto;
- padding:22px;
+.radio,.panel{
+ max-width:440px;margin:20px auto;padding:20px;
  background:linear-gradient(145deg,#4a263b,#21152d);
- border:2px solid #c18a55;
- border-radius:25px;
+ border:2px solid #c18a55;border-radius:22px;
  box-shadow:0 12px 35px #0008;
 }
 .dial{
- width:190px;height:190px;border-radius:50%;
- margin:10px auto 20px;
- border:8px solid #d9a85d;
+ width:150px;height:150px;border-radius:50%;
+ margin:10px auto 20px;border:8px solid #d9a85d;
  background:radial-gradient(circle,#693b65,#21152d);
  display:flex;align-items:center;justify-content:center;
- font-size:65px;
+ font-size:60px;
 }
 #status{color:#ffd477;margin:12px 0}
 #songTitle{font-size:19px;min-height:28px}
 button{
- border:0;border-radius:25px;padding:12px 18px;
+ border:0;border-radius:25px;padding:12px 16px;
  margin:5px;background:#e5ae63;color:#241426;
- font-weight:bold;font-size:15px;cursor:pointer;
+ font-weight:bold;font-size:14px;cursor:pointer;
 }
-button:active{transform:scale(.96)}
-.mainbtn{background:#ffcf75;font-size:18px}
+.mainbtn{background:#ffcf75;font-size:17px}
+.stationbtn{background:#f4d5a1}
+.active{background:#fff;color:#4b1745}
+iframe{width:100%;height:110px;border:0;border-radius:10px;margin-top:12px;background:#fff}
 audio{width:100%;margin:15px 0}
-.panel{
- max-width:440px;margin:20px auto;padding:18px;
- background:#21182d;border:1px solid #9d6a82;
- border-radius:18px;
-}
 input{
  width:100%;padding:12px;margin:7px 0;
- border:1px solid #bd8d9f;border-radius:9px;
- font-size:15px;
+ border:1px solid #bd8d9f;border-radius:9px;font-size:15px;
 }
 .song{
  padding:12px;margin:8px 0;background:#382640;
- border-radius:10px;text-align:left;
+ border-radius:10px;text-align:left;overflow:auto;
 }
 .song button{float:right;padding:7px 11px}
 .small{font-size:12px;color:#d9c5d9}
@@ -74,9 +63,34 @@ footer{padding:25px;color:#d8c1d7}
 
 <section class="radio">
  <div class="dial">📻</div>
+ <h2>📡 લાઇવ રેડિયો</h2>
  <div id="status">રેડિયો તૈયાર છે</div>
- <div id="songTitle">કોઈ ગીત પસંદ કરો</div>
+ <div id="songTitle">તમારું મનપસંદ સ્ટેશન પસંદ કરો</div>
 
+ <button class="stationbtn active" id="classicBtn"
+ onclick="changeStation('classic')">
+ Bollywood Classic
+ </button>
+
+ <button class="stationbtn" id="retroBtn"
+ onclick="changeStation('retro')">
+ Hindi Retro
+ </button>
+
+ <iframe id="liveFrame"
+ src="https://themelo.in/embed/6295"
+ title="Bollywood Classic Songs Live Radio"
+ allow="autoplay"
+ loading="lazy">
+ </iframe>
+
+ <p class="small">
+ ઉપરના પ્લેયરમાં PLAY દબાવીને લાઇવ ગીતો સાંભળો.
+ </p>
+
+ <hr style="border-color:#9d6a82">
+
+ <h3>🎵 તમારા ઉમેરેલા ગીતો</h3>
  <audio id="player" controls preload="none"></audio>
 
  <div>
@@ -105,7 +119,7 @@ footer{padding:25px;color:#d8c1d7}
   <button onclick="addSong()">ગીત ઉમેરો</button>
   <button onclick="logout()">Logout</button>
   <p class="small">
-   નોંધ: MP3 URL સીધી ચાલે તેવી HTTPS લિંક હોવી જોઈએ.
+   HTTPS MP3 લિંક જ વાપરો. આ ગીતોની યાદી હાલના બ્રાઉઝર સેશન પૂરતી છે.
   </p>
  </div>
 </section>
@@ -125,6 +139,25 @@ const player = document.getElementById("player");
 const songTitle = document.getElementById("songTitle");
 const statusText = document.getElementById("status");
 const songList = document.getElementById("songList");
+const liveFrame = document.getElementById("liveFrame");
+
+function changeStation(type){
+ player.pause();
+
+ if(type === "classic"){
+  liveFrame.src = "https://themelo.in/embed/6295";
+  songTitle.textContent = "Bollywood Classic Songs";
+  document.getElementById("classicBtn").classList.add("active");
+  document.getElementById("retroBtn").classList.remove("active");
+ }else{
+  liveFrame.src = "https://themelo.in/embed/6396";
+  songTitle.textContent = "Hindi Retro";
+  document.getElementById("retroBtn").classList.add("active");
+  document.getElementById("classicBtn").classList.remove("active");
+ }
+
+ statusText.textContent = "સ્ટેશન પસંદ કર્યું. પ્લેયરમાં PLAY દબાવો.";
+}
 
 function renderSongs(){
  songList.innerHTML = "";
@@ -162,10 +195,11 @@ function renderSongs(){
 function playSong(index){
  if(index < 0 || index >= songs.length) return;
 
+ liveFrame.src = "about:blank";
  currentIndex = index;
  player.src = songs[index].url;
  songTitle.textContent = songs[index].title;
- statusText.textContent = "ગીત વાગી રહ્યું છે...";
+ statusText.textContent = "તમારું MP3 ગીત વાગી રહ્યું છે...";
 
  player.play().catch(()=>{
   statusText.textContent = "ગીત ચાલુ ન થયું. MP3 URL તપાસો.";
@@ -175,12 +209,14 @@ function playSong(index){
 
 function togglePlay(){
  if(!player.src){
-  statusText.textContent = "પહેલાં ગીત પસંદ કરો.";
+  statusText.textContent = "પહેલાં તમારી યાદીમાંથી ગીત પસંદ કરો.";
   return;
  }
 
  if(player.paused){
-  player.play().catch(()=>statusText.textContent="Play થઈ શક્યું નથી.");
+  player.play().catch(()=>{
+   statusText.textContent = "Play થઈ શક્યું નથી.";
+  });
  }else{
   player.pause();
  }
@@ -197,6 +233,12 @@ function previousSong(){
 }
 
 player.addEventListener("ended",nextSong);
+
+player.addEventListener("pause",()=>{
+ if(player.src && !player.ended){
+  statusText.textContent = "તમારું MP3 ગીત બંધ છે.";
+ }
+});
 
 function login(){
  const pass = document.getElementById("password").value;
