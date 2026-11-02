@@ -5,120 +5,139 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>મોહબ્બત ખપે રેડિયો</title>
+
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;font-family:Arial,sans-serif;color:white;text-align:center;
+ margin:0;
+ font-family:Arial,sans-serif;
+ color:white;
+ text-align:center;
+ min-height:100vh;
  background:linear-gradient(145deg,#160d24,#3b1745,#101827);
- min-height:100vh
 }
-header{padding:22px 10px}
-h1{color:#ffd477;font-size:27px}
+header{padding:25px 12px 10px}
+h1{font-size:27px;color:#ffd477}
+header p{color:#f5d9ec}
 .radio,.panel{
- max-width:480px;margin:18px auto;padding:18px;
+ max-width:480px;
+ margin:20px auto;
+ padding:20px;
  background:linear-gradient(145deg,#4a263b,#21152d);
- border:2px solid #c18a55;border-radius:20px;
- box-shadow:0 12px 35px #0008
+ border:2px solid #c18a55;
+ border-radius:22px;
+ box-shadow:0 12px 35px #0008;
 }
 .dial{
- width:125px;height:125px;border-radius:50%;margin:10px auto;
- border:8px solid #d9a85d;background:#392047;
- display:flex;align-items:center;justify-content:center;font-size:55px
+ width:140px;height:140px;
+ border-radius:50%;
+ margin:10px auto 20px;
+ border:8px solid #d9a85d;
+ background:radial-gradient(circle,#693b65,#21152d);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:60px;
 }
-#status{color:#ffd477;margin:12px}
-#songTitle{font-size:18px;min-height:25px}
+#status{color:#ffd477;margin:12px 0}
+#songTitle{font-size:19px;min-height:28px}
 button{
- border:0;border-radius:22px;padding:11px 15px;margin:5px;
- background:#e5ae63;color:#241426;font-weight:bold;cursor:pointer
+ border:0;
+ border-radius:25px;
+ padding:12px 16px;
+ margin:5px;
+ background:#e5ae63;
+ color:#241426;
+ font-weight:bold;
+ font-size:14px;
+ cursor:pointer;
 }
-.station-btn.active{background:white;color:#57224f}
+button:active{transform:scale(.96)}
+.station-btn{background:#f4d5a1}
+.station-btn.active{background:#fff;color:#57224f}
 iframe{
- width:100%;height:120px;border:0;border-radius:10px;
- margin-top:12px;background:white
+ width:100%;
+ height:125px;
+ border:0;
+ border-radius:10px;
+ margin-top:12px;
+ background:#fff;
 }
-input{width:100%;padding:12px;margin:7px 0;border:0;border-radius:8px}
-audio{width:100%;margin:12px 0}
-.song{padding:12px;margin:8px 0;background:#382640;border-radius:10px;text-align:left}
-.song button{float:right;padding:7px}
 .small{font-size:12px;color:#d9c5d9}
-.hidden{display:none}
 a{color:#ffd477}
-footer{padding:25px}
+footer{padding:25px;color:#d8c1d7}
+#stationButtons{display:flex;flex-wrap:wrap;justify-content:center}
+@media(max-width:500px){
+ .radio,.panel{margin:14px;padding:15px}
+ h1{font-size:24px}
+}
 </style>
 </head>
+
 <body>
 
 <header>
-<h1>❤️ મોહબ્બત ખપે રેડિયો ❤️</h1>
-<p>જૂનાં ગીતો • ગુજરાતી ગીતો • ગઝલ • સંગીતની યાદો</p>
+ <h1>❤️ મોહબ્બત ખપે રેડિયો ❤️</h1>
+ <p>જૂનાં ગીતો • ગુજરાતી ગીતો • ગઝલ • સંગીતની યાદો</p>
 </header>
 
 <section class="radio">
-<div class="dial">📻</div>
-<h2>📡 LIVE RADIO</h2>
-<div id="status">રેડિયો તૈયાર છે</div>
-<div id="songTitle">સ્ટેશન પસંદ કરો</div>
 
-<div id="stationButtons"></div>
+ <div class="dial">📻</div>
 
-<iframe id="liveFrame"
+ <h2>📡 LIVE RADIO</h2>
+
+ <div id="status">તમારું મનપસંદ સ્ટેશન પસંદ કરો</div>
+ <div id="songTitle">રેડિયો તૈયાર છે</div>
+
+ <div id="stationButtons"></div>
+
+ <iframe
+ id="liveFrame"
  src="https://themelo.in/embed/6295"
  title="Live Radio"
  allow="autoplay"
- loading="lazy"></iframe>
+ loading="lazy">
+ </iframe>
 
-<p class="small">સ્ટેશનના પ્લેયરમાં PLAY દબાવીને સાંભળો.</p>
-<p class="small">
-<a id="stationLink" href="https://themelo.in/s/6295/bollywood-classic-songs"
- target="_blank" rel="noopener">સ્ટેશન સીધું ખોલો</a>
-</p>
+ <p class="small">
+ ગીત સાંભળવા પ્લેયરમાં PLAY દબાવો.
+ </p>
 
-<hr>
+ <p>
+ <a id="stationLink"
+ href="https://themelo.in/s/6295/bollywood-classic-songs"
+ target="_blank" rel="noopener">
+ સ્ટેશન સીધું ખોલો
+ </a>
+ </p>
 
-<h3>🎵 MP3 ગીતો</h3>
-<audio id="player" controls preload="none"></audio>
-<div>
-<button onclick="previousSong()">⏮ પાછલું</button>
-<button onclick="togglePlay()">▶ Play / Pause</button>
-<button onclick="nextSong()">આગળ ⏭</button>
-</div>
+ <hr>
+
+ <h3>🎧 રેડિયો વિશે</h3>
+ <p class="small">
+ મફત લાઇવ રેડિયો સ્ટેશનો સાંભળો.
+ તમારા મનપસંદ સ્ટેશન પસંદ કરો અને સંગીતનો આનંદ માણો.
+ </p>
+
 </section>
 
 <section class="panel">
-<h2>🎶 ગીતોની યાદી</h2>
-<div id="songList">હજુ ગીત ઉમેર્યાં નથી.</div>
+ <h2>❤️ મોહબ્બત ખપે રેડિયો</h2>
+ <p>જૂનાં ગીતોની યાદો, ગઝલ અને સંગીતનો સાથ.</p>
+ <p class="small">
+ આ એપમાં કોઈ Admin Login કે Subscription નથી.
+ </p>
 </section>
 
-<section class="panel">
-<h2>🔐 Admin Panel</h2>
-<div id="loginBox">
-<input id="password" type="password" placeholder="Admin પાસવર્ડ">
-<button onclick="login()">Login</button>
-</div>
-
-<div id="adminBox" class="hidden">
-<h3>📻 નવું રેડિયો સ્ટેશન ઉમેરો</h3>
-<input id="stationName" placeholder="સ્ટેશનનું નામ">
-<input id="stationEmbed" placeholder="Embed URL (https://...)">
-<input id="stationPage" placeholder="સ્ટેશનની સીધી લિંક (https://...)">
-<button onclick="addStation()">સ્ટેશન ઉમેરો</button>
-
-<hr>
-<h3>🎵 MP3 ગીત ઉમેરો</h3>
-<input id="newTitle" placeholder="ગીતનું નામ">
-<input id="newUrl" placeholder="MP3 HTTPS URL">
-<button onclick="addSong()">ગીત ઉમેરો</button>
-<button onclick="logout()">Logout</button>
-<p class="small">સ્ટેશન અને ગીતોની યાદી આ બ્રાઉઝરમાં સેવ થશે.</p>
-</div>
-</section>
-
-<footer>❤️ મોહબ્બત ખપે રેડિયો ❤️<br>સંગીત સાથે યાદગાર પળો</footer>
+<footer>
+ ❤️ મોહબ્બત ખપે રેડિયો ❤️<br>
+ સંગીત સાથે યાદગાર પળો
+</footer>
 
 <script>
-const ADMIN_PASSWORD="asif123";
 
-const defaultStations=[
+const stations = [
  {
   id:"classic",
   name:"Bollywood Classic",
@@ -130,254 +149,69 @@ const defaultStations=[
   name:"Hindi Retro",
   embed:"https://themelo.in/embed/6396",
   link:"https://themelo.in/s/6396/hindi-retro"
- },
- {
-  id:"gujarati",
-  name:"Vividh Bharati Gujarati",
-  embed:"https://themelo.in/embed/942",
-  link:"https://themelo.in/s/942/vividh-bharati"
  }
 ];
 
-function loadData(key,fallback){
- try{
-  const data=localStorage.getItem(key);
-  return data?JSON.parse(data):fallback;
- }catch(e){return fallback;}
-}
+let currentStation = "classic";
 
-let stations=loadData("mohabbatStations",defaultStations);
-let songs=loadData("mohabbatSongs",[]);
-let currentIndex=-1;
-
-const player=document.getElementById("player");
-const frame=document.getElementById("liveFrame");
-const statusText=document.getElementById("status");
-const songTitle=document.getElementById("songTitle");
-
-function saveStations(){
- localStorage.setItem("mohabbatStations",JSON.stringify(stations));
-}
-
-function saveSongs(){
- localStorage.setItem("mohabbatSongs",JSON.stringify(songs));
-}
+const frame = document.getElementById("liveFrame");
+const statusText = document.getElementById("status");
+const songTitle = document.getElementById("songTitle");
+const buttons = document.getElementById("stationButtons");
+const stationLink = document.getElementById("stationLink");
 
 function renderStations(){
- const box=document.getElementById("stationButtons");
- box.innerHTML="";
 
- stations.forEach(station=>{
-  const btn=document.createElement("button");
-  btn.className="station-btn";
-  btn.textContent=station.name;
-  btn.onclick=()=>changeStation(station.id);
-  btn.id="station_"+station.id;
-  box.appendChild(btn);
+ buttons.innerHTML = "";
 
-  if(!document.getElementById("adminBox").classList.contains("hidden")){
-   const del=document.createElement("button");
-   del.textContent="કાઢો";
-   del.onclick=()=>deleteStation(station.id);
-   box.appendChild(del);
+ stations.forEach(station => {
+
+  const btn = document.createElement("button");
+
+  btn.className = "station-btn";
+  btn.textContent = station.name;
+  btn.id = "btn_" + station.id;
+
+  if(station.id === currentStation){
+   btn.classList.add("active");
   }
+
+  btn.onclick = () => changeStation(station.id);
+
+  buttons.appendChild(btn);
+
  });
 }
 
 function changeStation(id){
- const station=stations.find(s=>s.id===id);
- if(!station)return;
 
- player.pause();
- player.removeAttribute("src");
- player.load();
- currentIndex=-1;
+ const station = stations.find(s => s.id === id);
 
- frame.src=station.embed;
- songTitle.textContent=station.name;
- statusText.textContent="નવું સ્ટેશન લોડ થઈ રહ્યું છે...";
+ if(!station) return;
 
- document.querySelectorAll(".station-btn").forEach(b=>{
-  b.classList.remove("active");
+ currentStation = id;
+
+ songTitle.textContent = station.name;
+ statusText.textContent = "નવું સ્ટેશન લોડ થઈ રહ્યું છે...";
+
+ frame.src = station.embed;
+ stationLink.href = station.link;
+
+ document.querySelectorAll(".station-btn").forEach(btn => {
+  btn.classList.remove("active");
  });
- const selected=document.getElementById("station_"+id);
- if(selected)selected.classList.add("active");
 
- document.getElementById("stationLink").href=station.link;
-}
+ const selected = document.getElementById("btn_" + id);
 
-function addStation(){
- const name=document.getElementById("stationName").value.trim();
- const embed=document.getElementById("stationEmbed").value.trim();
- const link=document.getElementById("stationPage").value.trim();
-
- if(!name||!embed||!link){
-  alert("ત્રણેય માહિતી નાખો.");
-  return;
+ if(selected){
+  selected.classList.add("active");
  }
 
- try{
-  if(new URL(embed).protocol!=="https:" ||
-     new URL(link).protocol!=="https:"){
-   alert("HTTPS લિંક જ નાખો.");
-   return;
-  }
- }catch(e){
-  alert("યોગ્ય લિંક નાખો.");
-  return;
- }
-
- const id="station"+Date.now();
- stations.push({id,name,embed,link});
- saveStations();
- renderStations();
-
- document.getElementById("stationName").value="";
- document.getElementById("stationEmbed").value="";
- document.getElementById("stationPage").value="";
- alert("નવું સ્ટેશન ઉમેરાયું.");
-}
-
-function deleteStation(id){
- if(!confirm("આ સ્ટેશન કાઢવું છે?"))return;
- stations=stations.filter(s=>s.id!==id);
- saveStations();
- renderStations();
-}
-
-function renderSongs(){
- const box=document.getElementById("songList");
- box.innerHTML="";
-
- if(!songs.length){
-  box.textContent="હજુ ગીત ઉમેર્યાં નથી.";
-  return;
- }
-
- songs.forEach((song,index)=>{
-  const div=document.createElement("div");
-  div.className="song";
-
-  const name=document.createElement("span");
-  name.textContent=(index+1)+". "+song.title;
-
-  const play=document.createElement("button");
-  play.textContent="▶";
-  play.onclick=()=>playSong(index);
-
-  div.append(name,play);
-
-  if(!document.getElementById("adminBox").classList.contains("hidden")){
-   const del=document.createElement("button");
-   del.textContent="કાઢો";
-   del.onclick=()=>deleteSong(index);
-   div.appendChild(del);
-  }
-  box.appendChild(div);
- });
-}
-
-function playSong(index){
- if(index<0||index>=songs.length)return;
- currentIndex=index;
-
- frame.src="about:blank";
- player.src=songs[index].url;
- songTitle.textContent=songs[index].title;
- statusText.textContent="MP3 ગીત ચાલુ થઈ રહ્યું છે.";
-
- player.play().then(()=>{
-  statusText.textContent="MP3 ગીત વાગી રહ્યું છે.";
- }).catch(()=>{
-  statusText.textContent="ગીત ચાલુ ન થયું. લિંક તપાસો.";
- });
- renderSongs();
-}
-
-function togglePlay(){
- if(!player.src){
-  statusText.textContent="પહેલાં MP3 ગીત પસંદ કરો.";
-  return;
- }
- if(player.paused){
-  player.play().catch(()=>{});
- }else{
-  player.pause();
- }
-}
-
-function nextSong(){
- if(songs.length)playSong((currentIndex+1)%songs.length);
-}
-
-function previousSong(){
- if(songs.length)playSong((currentIndex-1+songs.length)%songs.length);
-}
-
-player.addEventListener("ended",nextSong);
-
-function addSong(){
- const title=document.getElementById("newTitle").value.trim();
- const url=document.getElementById("newUrl").value.trim();
-
- if(!title||!url){
-  alert("ગીતનું નામ અને લિંક નાખો.");
-  return;
- }
-
- try{
-  if(new URL(url).protocol!=="https:"){
-   alert("HTTPS લિંક જ નાખો.");
-   return;
-  }
- }catch(e){
-  alert("યોગ્ય URL નાખો.");
-  return;
- }
-
- songs.push({title,url});
- saveSongs();
- renderSongs();
-
- document.getElementById("newTitle").value="";
- document.getElementById("newUrl").value="";
- alert("ગીત ઉમેરાયું.");
-}
-
-function deleteSong(index){
- if(!confirm("ગીત કાઢવું છે?"))return;
- songs.splice(index,1);
- saveSongs();
- if(currentIndex===index){
-  player.pause();
-  player.removeAttribute("src");
-  player.load();
-  currentIndex=-1;
- }
- renderSongs();
-}
-
-function login(){
- if(document.getElementById("password").value===ADMIN_PASSWORD){
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("adminBox").classList.remove("hidden");
-  renderStations();
-  renderSongs();
- }else{
-  alert("ખોટો પાસવર્ડ");
- }
-}
-
-function logout(){
- document.getElementById("adminBox").classList.add("hidden");
- document.getElementById("loginBox").classList.remove("hidden");
- document.getElementById("password").value="";
- renderStations();
- renderSongs();
 }
 
 renderStations();
-renderSongs();
+
 </script>
+
 </body>
 </html>
