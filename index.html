@@ -1,1 +1,271 @@
 
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>મોહબ્બત ખપે રેડિયો</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+ font-family:Arial,sans-serif;
+ background:linear-gradient(135deg,#171321,#49334e,#171321);
+ color:white;min-height:100vh;padding:18px;
+ display:flex;justify-content:center;align-items:center
+}
+.app{
+ width:100%;max-width:460px;padding:25px;
+ border:1px solid #b99a5b;border-radius:22px;
+ background:#211d2be8;text-align:center;
+ box-shadow:0 10px 35px #0008
+}
+h1{color:#ffd36b;font-size:27px;margin:12px 0}
+.sub{color:#ddd;font-size:13px;margin-bottom:20px}
+.radio{
+ width:180px;height:180px;margin:15px auto;
+ border:9px solid #9d7139;border-radius:50%;
+ background:radial-gradient(circle,#684b30,#211b18);
+ display:flex;align-items:center;justify-content:center;
+ font-size:75px;box-shadow:0 0 25px #d59b3c66
+}
+.status{color:#ffd36b;margin:12px 0;font-size:13px}
+.song{
+ background:#ffffff12;padding:17px;border-radius:12px;
+ margin:15px 0;border-left:4px solid #ffcc66
+}
+.song small{color:#aaa}
+#songTitle{font-size:17px;margin-top:8px}
+.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+button{
+ background:#ffcc66;color:#241b20;border:0;
+ border-radius:25px;padding:12px 17px;
+ font-weight:bold;cursor:pointer;margin:5px
+}
+button:disabled{opacity:.5}
+input{
+ width:100%;padding:12px;margin:7px 0;
+ border:1px solid #a78b61;border-radius:8px;
+ background:#30283b;color:white
+}
+.panel{
+ margin-top:25px;padding:15px;
+ border:1px dashed #ffcc66;border-radius:12px;text-align:left
+}
+.panel h3{color:#ffcc66;margin-bottom:10px}
+.hidden{display:none}
+.track{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:8px;padding:9px;border-bottom:1px solid #ffffff22;
+ font-size:13px
+}
+.track button{padding:7px 10px;font-size:11px}
+.note{font-size:11px;color:#bbb;line-height:1.6;margin-top:15px}
+</style>
+</head>
+<body>
+<div class="app">
+ <div style="font-size:38px">📻</div>
+ <h1>મોહબ્બત ખપે રેડિયો</h1>
+ <p class="sub">24/7 સદાબહાર જૂનાં ગીતોનો સંગાથ</p>
+
+ <div class="radio">🎶</div>
+ <div class="status" id="status">● રેડિયો તૈયાર છે</div>
+
+ <div class="song">
+  <small>હાલમાં વાગી રહ્યું છે</small>
+  <div id="songTitle">કોઈ ગીત પસંદ કરો</div>
+ </div>
+
+ <div class="controls">
+  <button onclick="previousSong()">⏮ પાછળ</button>
+  <button onclick="togglePlay()" id="playBtn">▶ PLAY</button>
+  <button onclick="nextSong()">આગળ ⏭</button>
+ </div>
+
+ <audio id="player" preload="none"></audio>
+
+ <div class="panel">
+  <h3>🔒 સ્ટેશન ઓનર લોગિન</h3>
+  <div id="login">
+   <input type="password" id="password" placeholder="Admin પાસવર્ડ">
+   <button onclick="login()" style="width:100%">લોગિન</button>
+  </div>
+
+  <div id="admin" class="hidden">
+   <h3>✅ Admin Control Panel</h3>
+
+   <label>તમારા ફોનમાંથી MP3 પસંદ કરો</label>
+   <input type="file" id="file" accept="audio/*">
+   <button onclick="addFile()" style="width:100%">MP3 ઉમેરો</button>
+
+   <hr style="border-color:#ffffff22;margin:15px 0">
+
+   <label>પરવાનગી ધરાવતા ગીતની MP3 URL</label>
+   <input id="url" placeholder="https://example.com/song.mp3">
+   <input id="urlName" placeholder="ગીતનું નામ">
+   <button onclick="addUrl()" style="width:100%">URL ગીત ઉમેરો</button>
+
+   <hr style="border-color:#ffffff22;margin:15px 0">
+
+   <h3>🎵 ગીતોની યાદી</h3>
+   <div id="trackList"></div>
+
+   <button onclick="logout()" style="background:#ff7777;width:100%">
+    Logout
+   </button>
+  </div>
+ </div>
+
+ <p class="note">
+  મોહબ્બત ખપે રેડિયો ❤️<br>
+  જૂનાં ગુજરાતી ગીતો • હિન્દી ગીતો • ગઝલો<br>
+  જાહેર પ્રસારણ માટે જરૂરી સંગીત પરવાનગી મેળવવી.
+ </p>
+</div>
+
+<script>
+const DEMO_PASSWORD = "asif123";
+
+let songs=[];
+let current=0;
+let playing=false;
+
+const player=document.getElementById("player");
+const title=document.getElementById("songTitle");
+const status=document.getElementById("status");
+const playBtn=document.getElementById("playBtn");
+
+function login(){
+ if(document.getElementById("password").value===DEMO_PASSWORD){
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("admin").classList.remove("hidden");
+  showSongs();
+ }else{
+  alert("ખોટો પાસવર્ડ!");
+ }
+}
+
+function logout(){
+ document.getElementById("login").classList.remove("hidden");
+ document.getElementById("admin").classList.add("hidden");
+ document.getElementById("password").value="";
+}
+
+function addFile(){
+ const file=document.getElementById("file").files[0];
+ if(!file)return alert("MP3 ફાઇલ પસંદ કરો");
+ const url=URL.createObjectURL(file);
+ songs.push({name:file.name,url:url,local:true});
+ showSongs();
+ document.getElementById("file").value="";
+ alert("ગીત ઉમેરાયું!");
+}
+
+function addUrl(){
+ const url=document.getElementById("url").value.trim();
+ const name=document.getElementById("urlName").value.trim();
+ if(!url||!name)return alert("ગીતનું નામ અને URL નાખો");
+ try{
+  const parsed=new URL(url);
+  if(parsed.protocol!=="https:")throw new Error();
+ }catch(e){
+  return alert("માન્ય HTTPS URL નાખો");
+ }
+ songs.push({name:name,url:url,local:false});
+ showSongs();
+ document.getElementById("url").value="";
+ document.getElementById("urlName").value="";
+}
+
+function showSongs(){
+ const list=document.getElementById("trackList");
+ list.innerHTML="";
+ songs.forEach((song,i)=>{
+  const div=document.createElement("div");
+  div.className="track";
+  const name=document.createElement("span");
+  name.textContent=(i+1)+". "+song.name;
+  const buttons=document.createElement("span");
+  const play=document.createElement("button");
+  play.textContent="▶";
+  play.onclick=()=>playSong(i);
+  const del=document.createElement("button");
+  del.textContent="❌";
+  del.onclick=()=>removeSong(i);
+  buttons.append(play,del);
+  div.append(name,buttons);
+  list.append(div);
+ });
+}
+
+function playSong(i){
+ if(!songs.length)return;
+ current=i;
+ player.src=songs[i].url;
+ title.textContent=songs[i].name;
+ player.play().then(()=>{
+  playing=true;
+  playBtn.textContent="⏸ PAUSE";
+  status.textContent="● ગીત વાગી રહ્યું છે";
+ }).catch(()=>{
+  status.textContent="ગીત વાગી શક્યું નથી. URL તપાસો.";
+ });
+}
+
+function togglePlay(){
+ if(!songs.length){
+  alert("હજુ ગીત ઉમેરાયું નથી. Admin ગીત ઉમેરે.");
+  return;
+ }
+ if(playing){
+  player.pause();
+  playing=false;
+  playBtn.textContent="▶ PLAY";
+  status.textContent="રેડિયો રોકાયેલું છે";
+ }else if(player.src){
+  player.play().then(()=>{
+   playing=true;
+   playBtn.textContent="⏸ PAUSE";
+  }).catch(()=>status.textContent="ગીત શરૂ થઈ શક્યું નથી");
+ }else{
+  playSong(current);
+ }
+}
+
+function nextSong(){
+ if(!songs.length)return;
+ playSong((current+1)%songs.length);
+}
+
+function previousSong(){
+ if(!songs.length)return;
+ playSong((current-1+songs.length)%songs.length);
+}
+
+function removeSong(i){
+ if(i===current){
+  player.pause();
+  player.removeAttribute("src");
+  playing=false;
+  playBtn.textContent="▶ PLAY";
+  title.textContent="ગીત પસંદ કરો";
+ }
+ if(songs[i].local)URL.revokeObjectURL(songs[i].url);
+ songs.splice(i,1);
+ current=0;
+ showSongs();
+}
+
+player.onended=nextSong;
+player.onpause=()=>{
+ if(player.ended)return;
+ playing=false;
+ playBtn.textContent="▶ PLAY";
+};
+player.onerror=()=>{
+ status.textContent="ઓડિયો લોડ થઈ શક્યો નથી";
+};
+</script>
+</body>
+</html>
+
