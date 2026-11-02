@@ -105,14 +105,12 @@ a{color:#ffd477}
  <div id="status">રેડિયો તૈયાર છે</div>
  <div id="songTitle">તમારું મનપસંદ સ્ટેશન પસંદ કરો</div>
 
- <button class="station-btn active"
- id="classicBtn"
+ <button class="station-btn active" id="classicBtn"
  onclick="changeStation('classic')">
  Bollywood Classic
  </button>
 
- <button class="station-btn"
- id="retroBtn"
+ <button class="station-btn" id="retroBtn"
  onclick="changeStation('retro')">
  Hindi Retro
  </button>
@@ -120,7 +118,7 @@ a{color:#ffd477}
  <iframe
  id="liveFrame"
  src="https://themelo.in/embed/6295"
- title="Bollywood Classic Songs Live Radio"
+ title="Live Radio"
  loading="lazy"
  allow="autoplay">
  </iframe>
@@ -165,22 +163,14 @@ a{color:#ffd477}
  <h2>🔐 Admin Panel</h2>
 
  <div id="loginBox">
-  <input
-   id="password"
-   type="password"
+  <input id="password" type="password"
    placeholder="Admin પાસવર્ડ">
   <button onclick="login()">Admin Login</button>
  </div>
 
  <div id="adminBox" class="hidden">
-
-  <input
-   id="newTitle"
-   placeholder="ગીતનું નામ">
-
-  <input
-   id="newUrl"
-   type="url"
+  <input id="newTitle" placeholder="ગીતનું નામ">
+  <input id="newUrl" type="url"
    placeholder="ગીતની MP3 HTTPS URL">
 
   <button onclick="addSong()">ગીત ઉમેરો</button>
@@ -189,7 +179,6 @@ a{color:#ffd477}
   <p class="small">
    MP3 URL સીધી ચાલે તેવી HTTPS લિંક હોવી જોઈએ.
   </p>
-
  </div>
 </section>
 
@@ -203,6 +192,13 @@ const ADMIN_PASSWORD = "asif123";
 
 let songs = [];
 let currentIndex = -1;
+
+try {
+ const savedSongs = localStorage.getItem("mohabbatRadioSongs");
+ if (savedSongs) songs = JSON.parse(savedSongs);
+} catch(e) {
+ songs = [];
+}
 
 const player = document.getElementById("player");
 const songTitle = document.getElementById("songTitle");
@@ -223,58 +219,67 @@ const stations = {
  }
 };
 
-function changeStation(type){
+function changeStation(type) {
+ const station = stations[type];
+
+ if (!station) {
+  statusText.textContent = "આ સ્ટેશન મળ્યું નથી.";
+  return;
+ }
 
  player.pause();
-
- const station = stations[type];
+ player.removeAttribute("src");
+ player.load();
+ currentIndex = -1;
 
  liveFrame.src = station.embed;
  songTitle.textContent = station.name;
- statusText.textContent =
-  "સ્ટેશન પસંદ થયું. પ્લેયરમાં PLAY દબાવો.";
+ statusText.textContent = "સ્ટેશન બદલાઈ ગયું. પ્લેયરમાં PLAY દબાવો.";
 
  document.getElementById("classicBtn")
-  .classList.toggle("active",type==="classic");
+  .classList.toggle("active", type === "classic");
 
  document.getElementById("retroBtn")
-  .classList.toggle("active",type==="retro");
+  .classList.toggle("active", type === "retro");
 
- document.getElementById("stationLink").href =
-  station.link;
+ document.getElementById("stationLink").href = station.link;
 }
 
-function renderSongs(){
+function saveSongs() {
+ try {
+  localStorage.setItem("mohabbatRadioSongs", JSON.stringify(songs));
+ } catch(e) {
+  alert("ગીત સેવ થઈ શક્યું નથી.");
+ }
+}
 
+function renderSongs() {
  songList.innerHTML = "";
 
- if(songs.length === 0){
+ if (songs.length === 0) {
   songList.textContent = "હજુ ગીત ઉમેર્યાં નથી.";
   return;
  }
 
- songs.forEach((song,index)=>{
-
+ songs.forEach((song,index) => {
   const div = document.createElement("div");
   div.className = "song";
 
   const name = document.createElement("span");
-  name.textContent = (index+1)+". "+song.title;
+  name.textContent = (index+1) + ". " + song.title;
 
   const playBtn = document.createElement("button");
   playBtn.textContent = "▶";
-  playBtn.onclick = ()=>playSong(index);
+  playBtn.onclick = () => playSong(index);
 
   div.appendChild(name);
   div.appendChild(playBtn);
 
-  if(!document.getElementById("adminBox")
-     .classList.contains("hidden")){
-
+  if (!document.getElementById("adminBox")
+      .classList.contains("hidden")) {
    const delBtn = document.createElement("button");
    delBtn.textContent = "કાઢો";
-   delBtn.onclick = ()=>deleteSong(index);
-
+   delBtn.onclick = () => deleteSong(index);
    div.appendChild(delBtn);
   }
 
@@ -282,151 +287,117 @@ function renderSongs(){
  });
 }
 
-function playSong(index){
-
- if(index < 0 || index >= songs.length) return;
+function playSong(index) {
+ if (index < 0 || index >= songs.length) return;
 
  currentIndex = index;
-
  liveFrame.src = "about:blank";
 
  player.src = songs[index].url;
-
  songTitle.textContent = songs[index].title;
  statusText.textContent = "તમારું MP3 ગીત ચાલુ થઈ રહ્યું છે.";
 
- player.play().then(()=>{
+ player.play().then(() => {
   statusText.textContent = "MP3 ગીત વાગી રહ્યું છે.";
- }).catch(()=>{
-  statusText.textContent =
-   "ગીત ચાલુ ન થયું. MP3 URL તપાસો.";
+ }).catch(() => {
+  statusText.textContent = "ગીત ચાલુ ન થયું. MP3 URL તપાસો.";
  });
 
  renderSongs();
 }
 
-function togglePlay(){
-
- if(!player.src){
+function togglePlay() {
+ if (!player.src) {
   statusText.textContent =
    "પહેલાં તમારી MP3 યાદીમાંથી ગીત પસંદ કરો.";
   return;
  }
 
- if(player.paused){
-  player.play().catch(()=>{
+ if (player.paused) {
+  player.play().catch(() => {
    statusText.textContent = "Play થઈ શક્યું નથી.";
   });
- }else{
+ } else {
   player.pause();
  }
 }
 
-function nextSong(){
-
- if(songs.length === 0) return;
-
- playSong((currentIndex+1)%songs.length);
+function nextSong() {
+ if (songs.length === 0) return;
+ playSong((currentIndex + 1) % songs.length);
 }
 
-function previousSong(){
-
- if(songs.length === 0) return;
-
- playSong((currentIndex-1+songs.length)%songs.length);
+function previousSong() {
+ if (songs.length === 0) return;
+ playSong((currentIndex - 1 + songs.length) % songs.length);
 }
 
-player.addEventListener("ended",nextSong);
+player.addEventListener("ended", nextSong);
 
-function login(){
-
+function login() {
  const pass = document.getElementById("password").value;
 
- if(pass === ADMIN_PASSWORD){
-
-  document.getElementById("loginBox")
-   .classList.add("hidden");
-
-  document.getElementById("adminBox")
-   .classList.remove("hidden");
-
+ if (pass === ADMIN_PASSWORD) {
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("adminBox").classList.remove("hidden");
   statusText.textContent = "Admin Login સફળ";
-
   renderSongs();
-
- }else{
+ } else {
   alert("ખોટો પાસવર્ડ");
  }
 }
 
-function logout(){
-
- document.getElementById("adminBox")
-  .classList.add("hidden");
-
- document.getElementById("loginBox")
-  .classList.remove("hidden");
-
+function logout() {
+ document.getElementById("adminBox").classList.add("hidden");
+ document.getElementById("loginBox").classList.remove("hidden");
  document.getElementById("password").value = "";
-
  renderSongs();
 }
 
-function addSong(){
+function addSong() {
+ const title = document.getElementById("newTitle").value.trim();
+ const url = document.getElementById("newUrl").value.trim();
 
- const title =
-  document.getElementById("newTitle").value.trim();
-
- const url =
-  document.getElementById("newUrl").value.trim();
-
- if(!title || !url){
+ if (!title || !url) {
   alert("ગીતનું નામ અને MP3 URL બંને નાખો.");
   return;
  }
 
- try{
-
+ try {
   const parsed = new URL(url);
-
-  if(parsed.protocol !== "https:"){
+  if (parsed.protocol !== "https:") {
    alert("HTTPS URL જ વાપરો.");
    return;
   }
-
- }catch(e){
+ } catch(e) {
   alert("યોગ્ય URL નાખો.");
   return;
  }
 
  songs.push({title,url});
+ saveSongs();
 
  document.getElementById("newTitle").value = "";
  document.getElementById("newUrl").value = "";
 
  renderSongs();
-
  alert("ગીત ઉમેરાયું.");
 }
 
-function deleteSong(index){
-
- if(!confirm("આ ગીત કાઢવું છે?")) return;
+function deleteSong(index) {
+ if (!confirm("આ ગીત કાઢવું છે?")) return;
 
  songs.splice(index,1);
+ saveSongs();
 
- if(currentIndex === index){
-
+ if (currentIndex === index) {
   player.pause();
   player.removeAttribute("src");
   player.load();
-
   currentIndex = -1;
-
   songTitle.textContent = "કોઈ ગીત પસંદ કરો";
   statusText.textContent = "ગીત કાઢી નાખ્યું.";
-
- }else if(currentIndex > index){
+ } else if (currentIndex > index) {
   currentIndex--;
  }
 
